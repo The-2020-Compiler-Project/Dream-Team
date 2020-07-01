@@ -1,0 +1,13 @@
+
+
+（1） 字符数组：char test[1000] （2） 关键字表： 关键字 编码 program 0 var 1 integer 2 real 3 char 4 begin 5 end 6 if 7 then 8 else 9 while 10 do 11 ifend 12 return 13
+
+界符表： 界符 编码 界符 编码 . 1 ( 10 : 2 ) 11 ; 3 < 12 = 4 > 13
+
+    5 @ 14 / 6 ( 15
+
+    7 ) 16
+
+    8 { 17 . 9 } 18
+
+Token序列结构体 struct Token { char content[10];//用来存放Token类型 int code;//用来存放表中位置 }token[200];//TOKEN序列数组，用来存放生成的token 文法： VARIABLE ->var ID_SEQUENCE ： TYPE ；{ID_SEQUENCE ： TYPE ；} ID_SEQUENCE ->id ARRAY {，id ARRAY } ARRAY->e|[cons] TYPE ->integer | real | char ANOUNCE_FUNCTION->var id(id :TYPE {,id：TYPE }):TYPE{FUN_SENTENCE} FUN_SENTENCE->begin SEN_SEQUENCE|CONDITION|CIRCLE {；SEN_SEQUENCE | CONDITION | CIRCLE} RETURN end RETURN->return FACTOR; FUNCTION->id(id{,id}) COM_SENTENCE -> begin SEN_SEQUENCE|CONDITION|CIRCLE|FUNCTION {；SEN_SEQUENCE | CONDITION | CIRCLE|FUNCTION} end SEN_SEQUENCE -> EVA_SENTENCE {；EVA_SENTENCE } CONDITION -> if BOOL then SEN_SEQUENCE else SEN_SEQUENCE CIRCLE -> while BOOL do COM_SENTENCE EVA_SENTENCE -> id ARRAY := EXPRESSION EXPRESSION -> EXPRESSION + TERM | EXPRESSION - TERM | TERM TERM -> TERM * FACTOR | TERM / FACTOR | FACTOR FACTOR -> id ARRAY | cons | ( EXPRESSION ) BOOL -> FACTOR <|>|@ FACTOR 其中：id为标识符，cons为常数。
