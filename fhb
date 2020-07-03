@@ -1,0 +1,303 @@
+//结构体用于临时保存数组相关信息
+typedef struct array1 {
+	string name;
+	int length;
+};
+//结构体用于临时保存子程序相关信息
+typedef struct function {
+	string name;
+	string type;
+	int len;
+	int fn = 0;
+	int off = 0;
+	string params[10];
+	string types[10];
+	int lens[10];
+};
+typedef struct params {
+	string name;
+	string csb[10];
+	string types[10];
+	int lens[10];
+	int fn = 0;
+};
+
+//符号表生成
+string fhb[50][4];
+string szb[10][4];
+string hsb[10][4];
+Stack s;
+Stack s1;
+Stack s2;
+Stack s3;
+Stack s4;
+stack<array1> s5;
+stack<array1> s6;
+stack<params> s7;
+stack<params> s8;
+string type;
+int len;
+int m = 1;//处理到fhb第几项
+int position = -1;//数组表第几项
+int page = -1;//函数表第几项
+int offset;
+
+void func10(function fun)//函数声明部分填表
+{
+	//参数表
+	params para;
+	para.name = fun.name;
+	para.fn = fun.fn;
+	int i = 0;
+	while (fun.params[i] != "#")
+	{
+
+		para.csb[i] = fun.params[i];
+		para.types[i] = fun.types[i];
+		para.lens[i] = fun.lens[i];
+		fun.off += para.lens[i];
+		i++;
+	}
+	s7.push(para);
+	//符号表
+	fhb[m][0] = fun.name;
+	fhb[m][1] = "p";
+	fhb[m][2] = "f";
+	fhb[m][3] = int2str(offset);
+	offset = offset + fun.off;
+	m++;
+	//函数表
+	page++;
+	hsb[page][1] = int2str(fun.off);
+	hsb[page][2] = int2str(fun.fn);
+	hsb[page][3] = fun.name;
+}
+
+void goujianfhb()
+{
+	int i = 0;
+	for (i = 0; i < 50; i++)
+	{
+		fhb[i][0] = "#";
+	}
+	for (i = 0; i < 10; i++)
+	{
+		szb[i][0] = "#";
+	}
+	for (i = 0; i < 10; i++)
+	{
+		hsb[i][0] = "#";
+	}
+}
+void func0()//填入符号表第一项，函数的名字
+{
+	fhb[0][0] = biaoshifubiao[token[ip].code];
+	fhb[0][1] = "/";
+	fhb[0][2] = "f";
+}
+void func1()//总体性质的执行，执行且只执行一次
+{
+	int i;
+	for (i = 1; i < 50; i++)
+	{
+		fhb[i][2] = "V";
+	}
+	offset = 0;
+	for (i = 0; i < 10; i++)
+	{
+		szb[i][0] = "0";
+	}
+	for (i = 0; i < 10; i++)
+	{
+		hsb[i][0] = "0";
+	}
+
+}
+void func2()//在一个声明变量意群模块里，依次把标识符压进栈中
+{
+	s1.Push(biaoshifubiao[token[ip].code]);
+}
+void func9(string up, string type, string len)
+{
+	position++;
+	szb[position][1] = up;
+	szb[position][2] = type;
+	szb[position][3] = len;
+}
+void func8(string na, int len)
+{
+	array1 a;
+	a.name = na;
+	a.length = len;
+	s5.push(a);
+}
+
+void func7()//S2用于恢复定义变量时的顺序
+{
+	while (!(s1.isEmpty()))
+	{
+		s2.Push(s1.Pop());
+	}
+	while (!(s5.empty()))
+	{
+		s6.push(s5.top());
+		s5.pop();
+	}
+
+}
+
+void func3()//设置整型填入标识符的性质
+{
+	type = "i";
+	len = 4;
+}
+void func4()//设置实型填入标识符的性质
+{
+	type = "r";
+	len = 8;
+}
+void func5()//设置字符型填入标识符的性质
+{
+	type = "c";
+	len = 1;
+}
+
+void func6()//声明部分填表算法，按定义的顺序填表，性质对应，最后的offset更新为下一个要填的变量的地址
+{
+	string* aname = new string;
+	int     alength;
+	if (!(s6.empty())) {
+		*aname = s6.top().name;
+		alength = s6.top().length;
+		s6.pop();
+	}
+	while (!(s2.isEmpty()))
+	{
+		fhb[m][0] = s2.Pop();
+		if (*aname == fhb[m][0])
+		{
+			fhb[m][1] = "a";
+			fhb[m][3] = int2str(offset);
+			offset = offset + len * alength;
+			int up = alength - 1;
+			func9(int2str(up), type, int2str(len));
+			if (!(s6.empty()))
+			{
+				*aname = s6.top().name;
+				alength = s6.top().length;
+				s6.pop();
+			}
+		}
+		else
+		{
+			fhb[m][1] = type;
+			fhb[m][3] = int2str(offset);
+			offset = offset + len;
+		}
+		m++;
+	}
+}
+
+
+
+void outputfhb()//输出符号表函数
+{
+	int i = 0;
+	fhb[0][3] = int2str(offset);
+	cout << "\n符号表如下:" << endl;
+	while (fhb[i][0] != "#")
+	{
+		cout << fhb[i][0] << "_" << fhb[i][1] << "_" << fhb[i][2] << "_" << fhb[i][3] << endl;
+		i++;
+	}
+	if (position != -1) {
+		i = 0;
+		cout << "\n数组表如下:" << endl;
+		while (i <= position)
+		{
+			cout << szb[i][0] << "_" << szb[i][1] << "_" << szb[i][2] << "_" << szb[i][3] << endl;
+			i++;
+		}
+	}
+	if (page != -1) {
+		i = 0;
+		cout << "\n函数表如下:" << endl;
+		while (i <= page)
+		{
+			cout << hsb[i][0] << "_" << hsb[i][1] << "_" << hsb[i][2] << "_" << hsb[i][3] << endl;
+			i++;
+		}
+	}
+	while (!s7.empty())
+	{
+		int off = 0;
+		i = 0;
+		params para = s7.top();
+		s7.pop();
+		cout << para.name << "函数的参数表如下:" << endl;
+		while (i < para.fn)
+		{
+			cout << para.csb[i] << "_" << para.types[i] << "_" << "V" << "_" << off << endl;
+			off += para.lens[i];
+			i++;
+		}
+	}
+}
+//以上为声明语句填符号表部分
+//以下为操作语句填写符号表部分
+
+void FUNC1()//根据中间变量如果为整型的话就有如下性质
+{
+	type = "i";
+	len = 4;
+}
+void FUNC2()//根据中间变量如果为实型的话就有如下性质
+{
+	type = "r";
+	len = 8;
+}
+void FUNC3()//根据中间变量如果为字符型型的话就有如下性质
+{
+	type = "c";
+	len = 1;
+}
+/*void FUNC4(string c)//每生成一个四元式将其中的t...压进去，注意插入函数位置
+{
+	s1.Push(c);
+}*/
+void FUNC5()//还原一个四元式意群的中间变量的顺序存在S4中
+{
+	while (!(s3.isEmpty()))
+	{
+		s4.Push(s3.Pop());
+	}
+}
+void FUNC6()//填表算法，同上
+{
+	while (!(s4.isEmpty()))
+	{
+		fhb[m][0] = s4.Pop();
+		fhb[m][1] = type;
+		fhb[m][3] = int2str(offset);
+		offset = offset + len;
+		m++;
+	}
+}
+
+int searchfhb(string a)//搜索符号表并若成功返回变量位置，用以判别中间变量的类型的
+{
+	int i = 0;
+	while (fhb[i][0] != "#")
+	{
+		if (a == fhb[i][0])
+		{
+			return i;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	return 0;
+}
+//填符号表第二部分完成
