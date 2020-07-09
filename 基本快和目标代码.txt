@@ -1,0 +1,199 @@
+int compa(string ch[])
+{
+	int i;
+	int k = 0;
+	for (i = 0; ch[i].length() != 0; i++) {
+		if ((ch[i] == "(while,_,_,_)") || (ch[i] == "(proc,_,_,_)") || (ch[i] == "(func,_,_,_)") || (ch[i] == "(ifend,_,_,_)") || (ch[i] == "(lable,_,_,_)"))
+		{
+			if (siyuanshi2[k].length() == 0)
+				siyuanshi2[k] = ch[i];
+			else
+				k++;
+			siyuanshi2[k] = ch[i];
+		}
+		else if ((ch[i].substr(0, 6) == "(goto,") || (ch[i].substr(0, 6) == "(then,") || (ch[i].substr(0, 6) == ("(else,")) || (ch[i].substr(0, 6) == "(whend" || (ch[i].substr(0, 6) == "(do,_,") || (ch[i].substr(0, 6) == "(call,")))
+		{//cout<<"**********"<<endl;
+			siyuanshi2[k] += ch[i];
+			//cout<<base[k]<<endl;
+			k++;
+		}
+		else if (ch[i].substr(0, 3) == "(=,")
+		{//cout<<"**********"<<endl;
+		//for (j=0;j<=(i-temp);j++,record++)
+			siyuanshi2[k] += ch[i];
+			k++;
+		}
+		else if (ch[i].substr(0, 7) == "(return")
+			continue;
+		else siyuanshi2[k] += ch[i];
+	}
+	cout << "基本块划分为：" << endl;
+	for (i = 0; siyuanshi2[i].length() != 0; i++)
+		cout << "(" << (i + 1) << ")" << siyuanshi2[i] << endl;
+	// cout<<ch[19]<<endl;
+	return 0;
+}
+int isOperator(string ch) {
+	if (ch == "then")
+		return 1;
+	if (ch == "else")
+		return 2;
+	if (ch == "+")
+		return 3;
+	if (ch == "-")
+		return 4;
+	if (ch == "*")
+		return 5;
+	if (ch == "/")
+		return 6;
+	if (ch == "=")
+		return 7;
+	if (ch == "<")
+		return 8;
+	if (ch == "ifend")
+		return 9;
+	if (ch == ">")
+		return 10;
+	if (ch == "while")
+		return 11;
+	if (ch == "do")
+		return 12;
+	if (ch == "whend")
+		return 13;
+	if (ch == "fun2")
+		return 14;
+	if (ch == "@")
+		return 8;
+	else return 0;
+}
+void Operator_Number() {
+	int i;
+	char* p = (char*)siyuanshi2[j].data();
+	while (*p == '(') {
+		p++;
+		while (*p != ',') {
+			Operate[mm].operationName += *p;
+			p++;
+		}
+		p++;
+		for (i = 0; *p != ','; i++) {
+			Operate[mm].opp1[i] = *p;
+			p++;
+		}
+		p++;
+		for (i = 0; *p != ','; i++) {
+			Operate[mm].opp2[i] = *p;
+			p++;
+		}
+		p++;
+		while (*p != ')') {
+			Operate[mm].ans += *p;
+			p++;
+		}
+		p++;
+		Operate[mm].temp = isOperator(Operate[mm].operationName);
+		mm++;
+	}
+}
+
+const char* OperatorToString(int i) {
+	switch (i) {
+	case 1:
+		return "JUMP0";
+	case 2:
+		return "JMP";
+	case 3:
+		return "ADD";
+	case 4:
+		return "SUB";
+	case 5:
+		return "MUL";
+	case 6:
+		return "DIV";
+	case 7:
+		return 0;
+	case 8:
+		return "COMPARE";
+	case 9:
+		return " ";
+	case 10:
+		return "COMPARE";
+	case 11:
+		return " ";
+	case 12:
+		return "JUMP0";
+	case 13:
+		return "JMP";
+	case 14:
+		return "FUN";
+	default:
+		return " ";
+	}
+}
+int displayOperations(int k) {
+	if (OperatorToString(Operate[k].temp) == " ")
+		return 0;
+	else {
+		cout << "LD" << "\t" << "R" << "," << Operate[k].opp1 << endl;
+		cout << OperatorToString(Operate[k].temp) << "\t" << "R" << "," << Operate[k].opp2 << endl;
+	}
+	return 0;
+}
+
+int displayOperations1(int k) {
+	if (OperatorToString(Operate[k].temp) == " ")
+		return 0;
+	else {
+		if ((Operate[k].temp == 1) || (Operate[k].temp == 12))
+		{
+			cout << "ST" << "\t" << "R" << "," << acc << endl;
+			cout << "LD" << "\t" << "R" << "," << Operate[k].opp1 << endl;
+			cout << OperatorToString(Operate[k].temp) << "\t" << "R" << "," << Operate[k].ans << endl;
+		}
+		if ((Operate[k].temp == 2) || (Operate[k].temp == 13))
+		{
+			cout << OperatorToString(Operate[k].temp) << "\t" << Operate[k].ans << endl;
+		}
+		if ((Operate[k].temp == 4) || (Operate[k].temp == 6))
+		{
+			cout << "ST" << "\t" << "R" << "," << acc << endl;
+			cout << "LD" << "\t" << "R" << "," << Operate[k].opp1 << endl;
+			cout << OperatorToString(Operate[k].temp) << "\t" << "R" << "," << Operate[k].opp2 << endl;
+		}
+		if ((Operate[k].temp == 3) || (Operate[k].temp == 5)) {
+			cout << OperatorToString(Operate[k].temp) << "\t" << "R" << "," << Operate[k].opp2 << endl;
+		}
+		if (Operate[k].temp == 7)
+		{
+			if (acc != "_")
+			{
+				cout << "ST" << "\t" << "R" << "," << acc << endl;
+			}
+			cout << "LD" << "\t" << "R" << "," << Operate[k].opp1 << endl;
+			cout << "ST" << "\t" << "R" << "," << Operate[k].ans << endl;
+		}
+		if (Operate[k].temp == 8)
+			cout << OperatorToString(Operate[k].temp) << "\t" << Operate[k].opp2 << "," << Operate[k].opp1 << endl;
+		if (Operate[k].temp == 10)
+			cout << OperatorToString(Operate[k].temp) << "\t" << Operate[k].opp1 << "," << Operate[k].opp2 << endl;
+		if (Operate[k].temp == 14)
+			cout << OperatorToString(Operate[k].temp) << ":" << endl;
+	}
+	return 0;
+}
+
+//}
+void last() {
+	int i = 0;
+	while (siyuanshi2[j].length() != 0) {
+		Operator_Number();
+		j++;
+	}
+	cout << "最后生成的汇编代码如下：" << endl;
+	for (i = 0; Operate[i].operationName.length() != 0; i++) {
+		if (acc == "0")
+			displayOperations(i);
+		else displayOperations1(i);
+		acc = Operate[i].ans;
+	}
+}
