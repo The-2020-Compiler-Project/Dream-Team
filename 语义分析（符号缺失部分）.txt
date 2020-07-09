@@ -1,0 +1,262 @@
+while (((token[ip].content[0] == 'k') && (token[ip].code == 1)))//如果当前单词是var
+	{
+
+		if (!(ANOUNCE_FUNCTION()))//识别函数定义不正确
+		{
+			cout << "函数识别错误" << endl;
+			back++;
+			return 0;
+		}
+		else {
+			//正确
+			if (((token[ip].content[0] == 'p') && (token[ip].code == 3)))//p3是分号
+				ip++;
+			else
+			{
+			  //  quefenhao=1
+				back++;
+				return 0;
+			}
+		}
+	}
+
+
+while (((token[ip].content[0] == 'k') && (token[ip].code == 1)))//如果当前单词是var
+	{
+
+		if (!(ANOUNCE_FUNCTION()))//识别函数定义不正确
+		{
+			cout << "函数识别错误" << endl;
+			back++;
+			return 0;
+		}
+		else {
+			//正确
+			if (((token[ip].content[0] == 'p') && (token[ip].code == 3)))//p3是分号
+				ip++;
+			else
+			{
+			    //quefenhao=1
+				back++;
+				return 0;
+			}
+		}
+	}
+
+if (!(token[ip].content[0] == 'p') && (token[ip].code == 2))/*不是：*/
+	{
+		//quemaohao=1
+		back++;
+		return 0;
+	}
+
+if ((token[ip].content[0] == 'p') && (token[ip].code == 3))/*是;*/
+	{
+		//quefenhao=1;
+		ip++;
+	}//看缺不缺分号
+
+
+		if ((token[ip].content[0] == 'p') && (token[ip].code == 2))//p2是冒号
+		{
+			func7();
+			ip++;
+		}
+		else
+		{
+			//quemaohao=1
+			back++;
+			ip++;
+			return 0;
+		}
+
+if ((token[ip].content[0] == 'p') && (token[ip].code == 3))//p3是分号
+		{
+			ip++;
+		}
+		else
+		{
+		 //   quefenhao=1
+			back++;
+			return 0;
+		}
+
+while (((token[ip].content[0] == 'p') && (token[ip].code == 1)))//p1是逗号
+	{
+		ip++;
+		if (token[ip].content[0] == 'i')
+		{
+			SEARCH1(biaoshifubiao[token[ip].code]);
+			func2();
+			ip++;
+		}
+		returnNum = ARRAY();
+		if (returnNum == 0)
+		{
+			back++;
+			return 0;
+		}
+		if (returnNum == 2) {
+			//TODO
+			func8(biaoshifubiao[token[ip - 4].code], str2int(changshubiao[token[ip - 2].code]));
+		}
+	}
+
+	if (back > 0)
+	{
+	  //  quedouhao=1
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+while (((token[ip].content[0] == 'p') && (token[ip].code == 3)))//p3是分号
+	{
+		ip++;
+		if (EVA_SENTENCE() == 0)
+		{
+			back++;
+			return 0;
+		}
+
+	}
+
+	if (back > 0)
+	{
+	   // quefenhao=1
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+if (!((token[ip].content[0] == 'p') && (token[ip].code == 4)))//p4为等于号
+	{
+		back++;//p4为等于号
+		return 0;
+	}
+	else
+	{
+	   // quedengyuhao=1
+		ip++;
+	}
+
+if ((token[ip].content[0] == 'p') && (token[ip].code == 10))/*是左括号*/
+	{
+		ip++;
+	}
+	else
+	{
+	  //  quezuokuohao=1
+		back++;
+		return 0;
+	}
+
+if ((token[ip].content[0] == 'p') && (token[ip].code == 11))/*是右括号*/
+	{
+		ip++;
+	}
+	else
+	{
+	 //   queyoukuohao=1
+		back++;
+		return 0;
+	}
+
+if ((token[ip].content[0] == 'p') && (token[ip].code == 18))/*是}，code为18*/
+	{
+		ip++;
+	}
+	else
+	{
+	  //  queyoukuohao=1
+		back++;
+		return 0;
+	}
+
+void SEARCH1(string a)
+{
+	int i = 0;
+	while (fhb[i][0] != "#")
+	{
+		if (a == fhb[i][0])
+		{
+			chongdingyi = 1;
+			return;
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+void SEARCH2(string a)
+{
+	int i = 0;
+	while (fhb[i][0] != "#")
+	{
+		if (a == fhb[i][0])
+		{
+			weidingyi = 0;
+			return;
+			i++;
+		}
+		else
+		{
+			weidingyi = 1;
+			i++;
+		}
+	}
+}
+
+if (!((token[ip].content[0] == 'k') && (token[ip].code == 7)))/*不是if*/
+	{
+	    //queif=1
+		back++;
+		return 0;
+	}
+	else
+	{
+		ip++;
+	}
+
+if (!((token[ip].content[0] == 'k') && (token[ip].code == 8)))//k8为then
+	{
+	    //quethen=1
+		back++;
+		return 0;
+	}
+	else
+	{
+		QUATTHEN();
+		jilu++;//很重要，不遗漏
+		ip++;
+	}
+
+if (!((token[ip].content[0] == 'k') && (token[ip].code == 10)))/*不是while*/
+	{
+	    //quewhile=1
+		back++;
+		return 0;
+	}
+	else
+	{
+		QUATWHILE();
+		ip++;
+	}
+
+if (!((token[ip].content[0] == 'k') && (token[ip].code == 11)))/*不是do*/
+	{
+	    //quedo=1
+		back++;
+		return 0;
+	}
+	else
+	{
+		QUATDO();
+		jilu++;//很重要，不遗漏
+		ip++;
+	}
